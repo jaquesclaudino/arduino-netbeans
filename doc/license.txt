@@ -1,0 +1,1 @@
+Arduino NetBeans Plugin is opensource, hosted at https://github.com/jaquesclaudino/arduino-netbeans
