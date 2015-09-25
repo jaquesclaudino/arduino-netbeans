@@ -1,0 +1,6 @@
+/src/arduino-project/build/
+/src/arduino-project/dist/
+/src/arduino-netbeans/nbproject/private/
+/src/arduino-netbeans/build/
+/src/arduino-plugin/nbproject/private/
+/src/arduino-project/lib/
