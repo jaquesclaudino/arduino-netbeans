@@ -98,6 +98,10 @@ ${LIB_LIBS_DIR}/%.c.o: ${ARDUINO_LIB_DIR}/%.c
 
 #Unconditional Build
 .build-pre-pre:
+ifeq "$(wildcard $(ARDUINO_BASE_DIR))" ""
+	echo "Folder $(ARDUINO_BASE_DIR) not found. Please fix it on Makefile."
+	test -d ${ARDUINO_BASE_DIR}
+endif
 	
 .build-post: .build-impl	
 	avr-objcopy -O ihex ${CND_ARTIFACT_PATH_${CONF}} ${CND_ARTIFACT_PATH_${CONF}}.hex
