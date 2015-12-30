@@ -7,13 +7,13 @@ CND_BASEDIR=`pwd`
 CND_BUILDDIR=build
 CND_DISTDIR=dist
 # Debug configuration
-CND_PLATFORM_Debug=Arduino-Linux-x86
-CND_ARTIFACT_DIR_Debug=dist/Debug/Arduino-Linux-x86
+CND_PLATFORM_Debug=Arduino-Linux
+CND_ARTIFACT_DIR_Debug=dist/Debug/Arduino-Linux
 CND_ARTIFACT_NAME_Debug=arduino-project
-CND_ARTIFACT_PATH_Debug=dist/Debug/Arduino-Linux-x86/arduino-project
-CND_PACKAGE_DIR_Debug=dist/Debug/Arduino-Linux-x86/package
+CND_ARTIFACT_PATH_Debug=dist/Debug/Arduino-Linux/arduino-project
+CND_PACKAGE_DIR_Debug=dist/Debug/Arduino-Linux/package
 CND_PACKAGE_NAME_Debug=arduino-project.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/Arduino-Linux-x86/package/arduino-project.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/Arduino-Linux/package/arduino-project.tar
 # Release configuration
 CND_PLATFORM_Release=Arduino-Windows
 CND_ARTIFACT_DIR_Release=dist/Release/Arduino-Windows

@@ -1,25 +1,15 @@
-# Arduino NetBeans plugin (https://github.com/jaquesclaudino/arduino-netbeans)
-# ------------------------------------------------------------------------------
-# Configure the values of COM_PORT, ARDUINO_BASE_DIR and platform (Uno or Mega). 
-# Uncomment the declarations of the libraries that you want to use.
-# For Arduino Duemilanove you must change the BAUD_RATE to 57600 bps.
-# Based on: http://playground.arduino.cc/Code/Netbeans
+# Arduino NetBeans plugin: https://github.com/jaquesclaudino/arduino-netbeans
 
-COM_PORT = /dev/ttyACM0
-BAUD_RATE = 115200
-ARDUINO_VERSION = 105
-ARDUINO_BASE_DIR = /home/jaques/opt/arduino-1.6.5-r5
-ARDUINO_CORE_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/avr/cores/arduino
-ARDUINO_LIB_DIR = ${ARDUINO_BASE_DIR}/libraries
-LIB_CORE_DIR = lib/core
-LIB_LIBS_DIR = lib/libs
-ARDUINO_LIB_CORE = ${LIB_CORE_DIR}/arduinocore.a
-ARDUINO_LIB_LIBS = ${LIB_LIBS_DIR}/arduinolibs.a
+#COM_PORT = /dev/ttyACM0
+#BAUD_RATE = 115200
+#ARDUINO_VERSION = 167
+#ARDUINO_BASE_DIR = /home/jaques/opt/arduino-1.6.7
+#INCLUDE_LIBS=Firmata;../hardware/arduino/avr/libraries/SoftwareSerial;
 
 # Arduino Uno:
-ARDUINO_MODEL = atmega328p
-ARDUINO_PROGRAMMER = arduino
-ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/avr/variants/standard
+#ARDUINO_MODEL = atmega328p
+#ARDUINO_PROGRAMMER = arduino
+#ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/avr/variants/standard
 
 # Arduino Mega 2560:
 #ARDUINO_MODEL = atmega2560
@@ -29,17 +19,15 @@ ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/avr/variants/standard
 # Arduino Duemilanove:
 #BAUD_RATE = 57600
 
-# Include the libraries that you want. This are subfolders of "arduino-1.0.4/libraries" folder:
-INCLUDE_LIBS=Firmata;
-#INCLUDE_LIBS=EEPROM;Esplora;Ethernet;Ethernet/utility;Firmata;GSMSHIELD;\
-LiquidCrystal;MemoryFree;RTClib;SD;SD/utility;Servo;SoftwareSerial;SPI;\
-Stepper;WiFi;WiFi/utility;Wire;Wire/utility;\
-
-AVR_DUDE = ${ARDUINO_BASE_DIR}/hardware/tools/avr/bin/avrdude -C ${ARDUINO_BASE_DIR}/hardware/tools/avr/etc/avrdude.conf
-	
-#
 ############################# END OF USER CHANGES #############################
-#
+
+ARDUINO_CORE_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/avr/cores/arduino
+ARDUINO_LIB_DIR = ${ARDUINO_BASE_DIR}/libraries
+LIB_CORE_DIR = lib/core
+LIB_LIBS_DIR = lib/libs
+ARDUINO_LIB_CORE = ${LIB_CORE_DIR}/arduinocore.a
+ARDUINO_LIB_LIBS = ${LIB_LIBS_DIR}/arduinolibs.a
+AVR_DUDE = ${ARDUINO_BASE_DIR}/hardware/tools/avr/bin/avrdude -C ${ARDUINO_BASE_DIR}/hardware/tools/avr/etc/avrdude.conf
 	
 INCLUDE = -c -g \
 -I${ARDUINO_CORE_DIR} \
@@ -99,7 +87,7 @@ ${LIB_LIBS_DIR}/%.c.o: ${ARDUINO_LIB_DIR}/%.c
 #Unconditional Build
 .build-pre-pre:
 ifeq "$(wildcard $(ARDUINO_BASE_DIR))" ""
-	echo "Folder $(ARDUINO_BASE_DIR) not found. Please fix it on Makefile."
+	echo "Folder $(ARDUINO_BASE_DIR) not found. Please fix it on Makefile. Remember the path can not contain spaces."
 	test -d ${ARDUINO_BASE_DIR}
 endif
 	
