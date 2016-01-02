@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><module codename="arduino">
-    <module_version install_time="1442329331134" last="true" origin="installer" specification_version="2.0.0">
-        <file crc="2763204882" name="config/Modules/arduino.xml"/>
-        <file crc="4009164542" name="modules/arduino.jar"/>
-    </module_version>
-</module>
