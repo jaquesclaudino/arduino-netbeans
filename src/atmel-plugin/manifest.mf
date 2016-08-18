@@ -1,7 +1,6 @@
 Manifest-Version: 1.0
 OpenIDE-Module: Atmel
 OpenIDE-Module-Localizing-Bundle: atmel/Bundle.properties
-OpenIDE-Module-Specification-Version: 1.0.0
+OpenIDE-Module-Specification-Version: 2.0.4
 OpenIDE-Module-Name: Atmel AVR Plugin
 OpenIDE-Module-Name_cs: Ericson Joseph
-OpenIDE-Module-Requires: org.openide.modules.os.Linux
