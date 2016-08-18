@@ -1,7 +1,6 @@
 package atmel;
 
 import java.io.File;
-import sun.awt.PlatformFont;
 
 /**
  *
@@ -38,8 +37,13 @@ public class BaseDirectories {
 
     private void findAvrdudeDir() {
         try {
-            avrdudeDir = recursiveFindFile(folder, "avrdude");
-            avrdudeConf = avrdudeDir.replace("bin", "etc") + ".conf";
+            if (OSValidator.isWindows()) {
+                avrdudeDir = recursiveFindFile(folder, "avrdude.exe");
+                avrdudeConf = avrdudeDir.replace("bin", "etc").replace(".exe", ".conf");
+            } else if (OSValidator.isUnix()) {
+                avrdudeDir = recursiveFindFile(folder, "avrdude");
+                avrdudeConf = avrdudeDir.replace("bin", "etc") + ".conf";
+            }
         } catch (Exception ex) {
         }
     }

@@ -40,34 +40,34 @@ import org.xml.sax.InputSource;
 @TemplateRegistration(folder = "Project/Atmel", displayName = "#Atmel_displayName", description = "AtmelDescription.html", iconBase = "atmel/atmel.png", content = "AtmelProject.zip")
 @Messages("Atmel_displayName=Atmel Project")
 public class AtmelWizardIterator implements WizardDescriptor./*Progress*/InstantiatingIterator {
-    
+
     private int index;
     private WizardDescriptor.Panel[] panels;
     private WizardDescriptor wiz;
-    
+
     public AtmelWizardIterator() {
     }
-    
+
     public static AtmelWizardIterator createIterator() {
         return new AtmelWizardIterator();
     }
-    
+
     private WizardDescriptor.Panel[] createPanels() {
         return new WizardDescriptor.Panel[]{
             new AtmelWizardPanel(),};
     }
-    
+
     private String[] createSteps() {
         return new String[]{
             NbBundle.getMessage(AtmelWizardIterator.class, "LBL_CreateProjectStep")
         };
     }
-    
+
     public Set/*<FileObject>*/ instantiate(/*ProgressHandle handle*/) throws IOException {
         Set<FileObject> resultSet = new LinkedHashSet<>();
         File dirF = FileUtil.normalizeFile((File) wiz.getProperty("projdir"));
         dirF.mkdirs();
-        
+
         FileObject template = Templates.getTemplate(wiz);
         FileObject dir = FileUtil.toFileObject(dirF);
         unZipFile(template.getInputStream(), dir, wiz);
@@ -82,15 +82,15 @@ public class AtmelWizardIterator implements WizardDescriptor./*Progress*/Instant
                 resultSet.add(subfolder);
             }
         }
-        
+
         File parent = dirF.getParentFile();
         if (parent != null && parent.exists()) {
             ProjectChooser.setProjectsFolder(parent);
         }
-        
+
         return resultSet;
     }
-    
+
     @Override
     public void initialize(WizardDescriptor wiz) {
         this.wiz = wiz;
@@ -116,7 +116,7 @@ public class AtmelWizardIterator implements WizardDescriptor./*Progress*/Instant
             }
         }
     }
-    
+
     @Override
     public void uninitialize(WizardDescriptor wiz) {
         this.wiz.putProperty("projdir", null);
@@ -124,23 +124,23 @@ public class AtmelWizardIterator implements WizardDescriptor./*Progress*/Instant
         this.wiz = null;
         panels = null;
     }
-    
+
     @Override
     public String name() {
         return MessageFormat.format("{0} of {1}",
                 new Object[]{new Integer(index + 1), new Integer(panels.length)});
     }
-    
+
     @Override
     public boolean hasNext() {
         return index < panels.length - 1;
     }
-    
+
     @Override
     public boolean hasPrevious() {
         return index > 0;
     }
-    
+
     @Override
     public void nextPanel() {
         if (!hasNext()) {
@@ -148,7 +148,7 @@ public class AtmelWizardIterator implements WizardDescriptor./*Progress*/Instant
         }
         index++;
     }
-    
+
     @Override
     public void previousPanel() {
         if (!hasPrevious()) {
@@ -156,7 +156,7 @@ public class AtmelWizardIterator implements WizardDescriptor./*Progress*/Instant
         }
         index--;
     }
-    
+
     @Override
     public WizardDescriptor.Panel current() {
         return panels[index];
@@ -166,11 +166,11 @@ public class AtmelWizardIterator implements WizardDescriptor./*Progress*/Instant
     @Override
     public final void addChangeListener(ChangeListener l) {
     }
-    
+
     @Override
     public final void removeChangeListener(ChangeListener l) {
     }
-    
+
     private static void unZipFile(InputStream source, FileObject projectRoot, WizardDescriptor wiz) throws IOException {
         try {
             ZipInputStream str = new ZipInputStream(source);
@@ -189,9 +189,9 @@ public class AtmelWizardIterator implements WizardDescriptor./*Progress*/Instant
                         filterProjectXML(fo, str, projectRoot.getName());
                     } else if ("Makefile".equals(entry.getName())) {
                         filterMakefile(fo, str, wiz);
-                    } else if("main.cpp".equals(entry.getName())){
+                    } else if ("main.cpp".equals(entry.getName())) {
                         filtermain(fo, str, wiz);
-                    }else {
+                    } else {
                         writeFile(str, fo);
                     }
                 }
@@ -200,7 +200,7 @@ public class AtmelWizardIterator implements WizardDescriptor./*Progress*/Instant
             source.close();
         }
     }
-    
+
     private static void writeFile(ZipInputStream str, FileObject fo) throws IOException {
         OutputStream out = fo.getOutputStream();
         try {
@@ -209,7 +209,7 @@ public class AtmelWizardIterator implements WizardDescriptor./*Progress*/Instant
             out.close();
         }
     }
-    
+
     private static void filterProjectXML(FileObject fo, ZipInputStream str, String name) throws IOException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -238,60 +238,61 @@ public class AtmelWizardIterator implements WizardDescriptor./*Progress*/Instant
             Exceptions.printStackTrace(ex);
             writeFile(str, fo);
         }
-        
+
     }
-    
+
     private static void filtermain(FileObject fo, ZipInputStream str, WizardDescriptor wiz) throws IOException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             FileUtil.copy(str, baos);
-            
+
             try (PrintWriter pw = new PrintWriter(new FileOutputStream(new File(fo.getPath()), true))) {
-                
+
+                String user = System.getProperty("user.name");
                 Date date = new Date();
-                SimpleDateFormat  format = new SimpleDateFormat("MMMMM dd, yyyy, hh:mm aaa");
+                SimpleDateFormat format = new SimpleDateFormat("MMMMM dd, yyyy, hh:mm aaa");
                 pw.println("/* \n"
                         + " * File:   main.cpp\n"
-                        + " * Author: ${user}\n"
+                        + " * Author: " + user + "\n"
                         + " * \n"
-                        + " * Created on "+format.format(date) + "\n"
+                        + " * Created on " + format.format(date) + "\n"
                         + " */");
                 pw.println();
                 pw.println(baos.toString());
             }
-            
+
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             writeFile(str, fo);
         }
     }
-    
+
     private static void filterMakefile(FileObject fo, ZipInputStream str, WizardDescriptor wiz) throws IOException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             FileUtil.copy(str, baos);
-            
+
             try (PrintWriter pw = new PrintWriter(new FileOutputStream(new File(fo.getPath()), true))) {
-                
+
                 MMCDevice mmc = (MMCDevice) wiz.getProperty("mmc");
                 pw.println("MMC_MODEL = " + mmc.getMmc());
-                
+
                 pw.println("MMC_MODEL_AVRDURE = " + mmc.getCode());
-                
+
                 ProgrammerDevice programmer = (ProgrammerDevice) wiz.getProperty("programmer");
                 pw.println("PROGRAMMER = " + programmer.getCode());
-                
+
                 String port = (String) wiz.getProperty("port");
                 pw.print("PORT = " + port);
                 pw.println();
                 pw.println(baos.toString());
             }
-            
+
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             writeFile(str, fo);
         }
-        
+
     }
-    
+
 }

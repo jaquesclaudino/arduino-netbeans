@@ -40,34 +40,34 @@ import org.xml.sax.InputSource;
 @TemplateRegistration(folder = "Project/Atmel", displayName = "#Arduino_displayName", description = "ArduinoDescription.html", iconBase = "atmel/Arduino.png", content = "ArduinoProject.zip")
 @Messages("Arduino_displayName=Arduino Project")
 public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/InstantiatingIterator {
-    
+
     private int index;
     private WizardDescriptor.Panel[] panels;
     private WizardDescriptor wiz;
-    
+
     public ArduinoWizardIterator() {
     }
-    
+
     public static ArduinoWizardIterator createIterator() {
         return new ArduinoWizardIterator();
     }
-    
+
     private WizardDescriptor.Panel[] createPanels() {
         return new WizardDescriptor.Panel[]{
             new ArduinoWizardPanel(),};
     }
-    
+
     private String[] createSteps() {
         return new String[]{
             NbBundle.getMessage(ArduinoWizardIterator.class, "LBL_CreateProjectStep")
         };
     }
-    
+
     public Set/*<FileObject>*/ instantiate(/*ProgressHandle handle*/) throws IOException {
         Set<FileObject> resultSet = new LinkedHashSet<FileObject>();
         File dirF = FileUtil.normalizeFile((File) wiz.getProperty("projdir"));
         dirF.mkdirs();
-        
+
         FileObject template = Templates.getTemplate(wiz);
         FileObject dir = FileUtil.toFileObject(dirF);
         unZipFile(template.getInputStream(), dir, wiz);
@@ -82,15 +82,15 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
                 resultSet.add(subfolder);
             }
         }
-        
+
         File parent = dirF.getParentFile();
         if (parent != null && parent.exists()) {
             ProjectChooser.setProjectsFolder(parent);
         }
-        
+
         return resultSet;
     }
-    
+
     public void initialize(WizardDescriptor wiz) {
         this.wiz = wiz;
         index = 0;
@@ -115,41 +115,41 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
             }
         }
     }
-    
+
     public void uninitialize(WizardDescriptor wiz) {
         this.wiz.putProperty("projdir", null);
         this.wiz.putProperty("name", null);
         this.wiz = null;
         panels = null;
     }
-    
+
     public String name() {
         return MessageFormat.format("{0} of {1}",
                 new Object[]{new Integer(index + 1), new Integer(panels.length)});
     }
-    
+
     public boolean hasNext() {
         return index < panels.length - 1;
     }
-    
+
     public boolean hasPrevious() {
         return index > 0;
     }
-    
+
     public void nextPanel() {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
         index++;
     }
-    
+
     public void previousPanel() {
         if (!hasPrevious()) {
             throw new NoSuchElementException();
         }
         index--;
     }
-    
+
     public WizardDescriptor.Panel current() {
         return panels[index];
     }
@@ -157,10 +157,10 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
     // If nothing unusual changes in the middle of the wizard, simply:
     public final void addChangeListener(ChangeListener l) {
     }
-    
+
     public final void removeChangeListener(ChangeListener l) {
     }
-    
+
     private static void unZipFile(InputStream source, FileObject projectRoot, WizardDescriptor wiz) throws IOException {
         try {
             ZipInputStream str = new ZipInputStream(source);
@@ -190,7 +190,7 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
             source.close();
         }
     }
-    
+
     private static void writeFile(ZipInputStream str, FileObject fo) throws IOException {
         OutputStream out = fo.getOutputStream();
         try {
@@ -199,32 +199,33 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
             out.close();
         }
     }
-    
+
     private static void filtermain(FileObject fo, ZipInputStream str, WizardDescriptor wiz) throws IOException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             FileUtil.copy(str, baos);
-            
+
             try (PrintWriter pw = new PrintWriter(new FileOutputStream(new File(fo.getPath()), true))) {
-                
+
+                String user = System.getProperty("user.name");
                 Date date = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("MMMMM dd, yyyy, hh:mm aaa");
                 pw.println("/* \n"
                         + " * File:   main.cpp\n"
-                        + " * Author: ${user}\n"
+                        + " * Author: " + user + "\n"
                         + " * \n"
                         + " * Created on " + format.format(date) + "\n"
                         + " */");
                 pw.println();
                 pw.println(baos.toString());
             }
-            
+
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             writeFile(str, fo);
         }
     }
-    
+
     private static void filterProjectXML(FileObject fo, ZipInputStream str, String name) throws IOException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -253,24 +254,24 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
             Exceptions.printStackTrace(ex);
             writeFile(str, fo);
         }
-        
+
     }
-    
+
     private static void filterMakefile(FileObject fo, ZipInputStream str, WizardDescriptor wiz) throws IOException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             FileUtil.copy(str, baos);
-            
+
             try (PrintWriter pw = new PrintWriter(new FileOutputStream(new File(fo.getPath()), true))) {
                 pw.print("COM_PORT = ");
                 pw.println(wiz.getProperty("comport"));
-                
+
                 pw.println("ARDUINO_VERSION = 167");
-                
+
                 pw.print("ARDUINO_BASE_DIR = ");
                 String basedir = wiz.getProperty("basedir").toString().trim().replaceAll("\\\\", "/");
                 pw.println(basedir);
-                
+
                 pw.print("INCLUDE_LIBS = ");
                 String libraries = wiz.getProperty("libraries").toString().trim().replaceAll("\r", "").replace("\n", "");
                 if (libraries.isEmpty()) {
@@ -278,10 +279,10 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
                 } else {
                     pw.println(libraries);
                 }
-                
+
                 ArduinoDevice arduino = (ArduinoDevice) wiz.getProperty("board");
                 BaseDirectories dir = new BaseDirectories(basedir, arduino.getPinFolder());
-                
+
                 pw.println("ARDUINO_MODEL = " + arduino.getCode());
                 pw.println("BAUD_RATE = " + Long.toString(arduino.getBaudrate()));
                 pw.println("ARDUINO_PROGRAMMER = " + arduino.getProgrammer());
@@ -291,12 +292,12 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
                 pw.println();
                 pw.println(baos.toString());
             }
-            
+
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             writeFile(str, fo);
         }
-        
+
     }
-    
+
 }
