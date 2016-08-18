@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=arduino-project-m
+PROJECTNAME=AVRProject
 
 # Active Configuration
 DEFAULTCONF=Debug

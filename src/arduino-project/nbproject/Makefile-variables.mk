@@ -7,21 +7,21 @@ CND_BASEDIR=`pwd`
 CND_BUILDDIR=build
 CND_DISTDIR=dist
 # Debug configuration
-CND_PLATFORM_Debug=Arduino-Linux
-CND_ARTIFACT_DIR_Debug=dist/Debug/Arduino-Linux
-CND_ARTIFACT_NAME_Debug=arduino-project
-CND_ARTIFACT_PATH_Debug=dist/Debug/Arduino-Linux/arduino-project
-CND_PACKAGE_DIR_Debug=dist/Debug/Arduino-Linux/package
-CND_PACKAGE_NAME_Debug=arduino-project.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/Arduino-Linux/package/arduino-project.tar
+CND_PLATFORM_Debug=Arduino-Linux-x86
+CND_ARTIFACT_DIR_Debug=dist/Debug/Arduino-Linux-x86
+CND_ARTIFACT_NAME_Debug=arduino-project-m
+CND_ARTIFACT_PATH_Debug=dist/Debug/Arduino-Linux-x86/arduino-project-m
+CND_PACKAGE_DIR_Debug=dist/Debug/Arduino-Linux-x86/package
+CND_PACKAGE_NAME_Debug=arduino-project-m.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/Arduino-Linux-x86/package/arduino-project-m.tar
 # Release configuration
 CND_PLATFORM_Release=Arduino-Windows
 CND_ARTIFACT_DIR_Release=dist/Release/Arduino-Windows
-CND_ARTIFACT_NAME_Release=arduinoproject
-CND_ARTIFACT_PATH_Release=dist/Release/Arduino-Windows/arduinoproject
+CND_ARTIFACT_NAME_Release=arduino-project
+CND_ARTIFACT_PATH_Release=dist/Release/Arduino-Windows/arduino-project
 CND_PACKAGE_DIR_Release=dist/Release/Arduino-Windows/package
-CND_PACKAGE_NAME_Release=arduinoproject.tar
-CND_PACKAGE_PATH_Release=dist/Release/Arduino-Windows/package/arduinoproject.tar
+CND_PACKAGE_NAME_Release=arduino-project.tar
+CND_PACKAGE_PATH_Release=dist/Release/Arduino-Windows/package/arduino-project.tar
 #
 # include compiler specific variables
 #

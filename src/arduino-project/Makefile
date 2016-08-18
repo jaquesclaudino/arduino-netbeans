@@ -1,33 +1,10 @@
-# Arduino NetBeans plugin: https://github.com/jaquesclaudino/arduino-netbeans
 
-#COM_PORT = /dev/ttyACM0
-#BAUD_RATE = 115200
-#ARDUINO_VERSION = 167
-#ARDUINO_BASE_DIR = /home/jaques/opt/arduino-1.6.7
-#INCLUDE_LIBS=Firmata;../hardware/arduino/avr/libraries/SoftwareSerial;
-
-# Arduino Uno:
-#ARDUINO_MODEL = atmega328p
-#ARDUINO_PROGRAMMER = arduino
-#ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/avr/variants/standard
-
-# Arduino Mega 2560:
-#ARDUINO_MODEL = atmega2560
-#ARDUINO_PROGRAMMER = wiring
-#ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/variants/mega
-
-# Arduino Duemilanove:
-#BAUD_RATE = 57600
-
-############################# END OF USER CHANGES #############################
-
-ARDUINO_CORE_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/avr/cores/arduino
 ARDUINO_LIB_DIR = ${ARDUINO_BASE_DIR}/libraries
 LIB_CORE_DIR = lib/core
 LIB_LIBS_DIR = lib/libs
 ARDUINO_LIB_CORE = ${LIB_CORE_DIR}/arduinocore.a
 ARDUINO_LIB_LIBS = ${LIB_LIBS_DIR}/arduinolibs.a
-AVR_DUDE = ${ARDUINO_BASE_DIR}/hardware/tools/avr/bin/avrdude -C ${ARDUINO_BASE_DIR}/hardware/tools/avr/etc/avrdude.conf
+AVR_DUDE = /usr/bin/avrdude -C /etc/avrdude/avrdude.conf
 	
 INCLUDE = -c -g \
 -I${ARDUINO_CORE_DIR} \
@@ -59,9 +36,11 @@ CCADMIN=CCadmin
 # build
 build: .build-post	
 ${ARDUINO_LIB_CORE}: ${CORE_OBJECTS}
+	mkdir -p $(dir $@)
 	${CMD_AVR_AR} ${ARDUINO_LIB_CORE} ${CORE_OBJECTS}
 	
 ${ARDUINO_LIB_LIBS}: ${LIB_OBJECTS}
+	mkdir -p $(dir $@)
 	${CMD_AVR_AR} ${ARDUINO_LIB_LIBS} ${CORE_OBJECTS} ${LIB_OBJECTS}
 	
 libraries: ${ARDUINO_LIB_CORE} ${ARDUINO_LIB_LIBS}
@@ -102,6 +81,9 @@ upload:
 
 # clean
 clean: .clean-post
+	rm -rf dist/Debug/Arduino-Linux/*
+	rm -rf ${LIB_CORE_DIR}/*
+	rm -rf ${LIB_LIBS_DIR}/*
 
 .clean-pre:
 # Add your pre 'clean' code here...
