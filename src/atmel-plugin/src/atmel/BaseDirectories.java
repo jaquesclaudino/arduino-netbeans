@@ -17,9 +17,15 @@ public class BaseDirectories {
 
     private String pinDir;
 
+    private String avrdudeDir;
+
+    private String avrdudeConf;
+
     public BaseDirectories() {
         arduinoCoreDir = new String();
         pinDir = new String();
+        avrdudeConf = new String();
+        avrdudeConf = new String();
     }
 
     public BaseDirectories(String baseDir, String platform) {
@@ -27,6 +33,15 @@ public class BaseDirectories {
         arduinoCoreDir = new String();
         pinDir = new String();
         findDir(platform);
+        findAvrdudeDir();
+    }
+
+    private void findAvrdudeDir() {
+        try {
+            avrdudeDir = recursiveFindFile(folder, "avrdude");
+            avrdudeConf = avrdudeDir.replace("bin", "etc") + ".conf";
+        } catch (Exception ex) {
+        }
     }
 
     private void findDir(String platform) {
@@ -34,7 +49,6 @@ public class BaseDirectories {
         try {
             String resp = recursiveFindFile(folder, KEYCORE);
             String base_dir = folder.getAbsolutePath();
-            arduinoCoreDir = resp.substring(base_dir.length());
             arduinoCoreDir = resp.substring(base_dir.length());
             arduinoCoreDir = arduinoCoreDir.substring(0, arduinoCoreDir.length() - KEYCORE.length() - 1);
             resp = recursiveFindFolder(folder, platform);
@@ -78,6 +92,14 @@ public class BaseDirectories {
 
     public String getPinDir() {
         return pinDir;
+    }
+
+    public String getAvrdudeDir() {
+        return avrdudeDir;
+    }
+
+    public String getAvrdudeConf() {
+        return avrdudeConf;
     }
 
 }

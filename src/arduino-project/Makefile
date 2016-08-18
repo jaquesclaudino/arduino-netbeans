@@ -4,7 +4,6 @@ LIB_CORE_DIR = lib/core
 LIB_LIBS_DIR = lib/libs
 ARDUINO_LIB_CORE = ${LIB_CORE_DIR}/arduinocore.a
 ARDUINO_LIB_LIBS = ${LIB_LIBS_DIR}/arduinolibs.a
-AVR_DUDE = /usr/bin/avrdude -C /etc/avrdude/avrdude.conf
 	
 INCLUDE = -c -g \
 -I${ARDUINO_CORE_DIR} \
