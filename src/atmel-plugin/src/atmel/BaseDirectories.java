@@ -59,6 +59,11 @@ public class BaseDirectories {
             arduinoCoreDir = arduinoCoreDir.substring(0, arduinoCoreDir.length() - KEYCORE.length() - 1);
             resp = recursiveFindFolder(folder, platform);
             pinDir = resp.substring(base_dir.length());
+            if(OSValidator.isWindows()){
+                arduinoCoreDir = arduinoCoreDir.replace("\\", "/");
+                pinDir = pinDir.replace("\\", "/");
+            }
+            
         } catch (Exception ex) {
         }
     }
