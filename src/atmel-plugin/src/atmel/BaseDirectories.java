@@ -39,8 +39,10 @@ public class BaseDirectories {
         try {
             if (OSValidator.isWindows()) {
                 avrdudeDir = recursiveFindFile(folder, "avrdude.exe");
+                avrdudeDir = avrdudeDir.replace("\\", "/");
                 avrdudeConf = avrdudeDir.replace("bin", "etc").replace(".exe", ".conf");
-            } else if (OSValidator.isUnix()) {
+                avrdudeConf = avrdudeConf.replace("\\", "/");
+            } else if (OSValidator.isUnix() || OSValidator.isMac()) {
                 avrdudeDir = recursiveFindFile(folder, "avrdude");
                 avrdudeConf = avrdudeDir.replace("bin", "etc") + ".conf";
             }
