@@ -1,5 +1,4 @@
 
-ARDUINO_LIB_DIR = ${ARDUINO_BASE_DIR}/libraries
 LIB_CORE_DIR = lib/core
 LIB_LIBS_DIR = lib/libs
 ARDUINO_LIB_CORE = ${LIB_CORE_DIR}/arduinocore.a
@@ -8,7 +7,7 @@ ARDUINO_LIB_LIBS = ${LIB_LIBS_DIR}/arduinolibs.a
 INCLUDE = -c -g \
 -I${ARDUINO_CORE_DIR} \
 -I${ARDUINO_PINS_DIR} \
-$(patsubst %,-I${ARDUINO_LIB_DIR}/%,$(subst ;, ,$(INCLUDE_LIBS)))
+$(patsubst %,-I${ARDUINO_LIB_DIR}/%,$(subst ;, ,$(INCLUDE_LIBS)))${ARDUINO_LIB_DIR_SUB}
 
 FLAGS_GCC = -c -g -Os -Wall -ffunction-sections -fdata-sections -mmcu=${ARDUINO_MODEL} -DF_CPU=16000000L -MMD -DUSB_VID=null -DUSB_PID=null -DARDUINO=${ARDUINO_VERSION}
 FLAGS_GPP = ${FLAGS_GCC} -fno-exceptions

@@ -288,11 +288,13 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
                 pw.println("ARDUINO_PROGRAMMER = " + arduino.getProgrammer());
                 pw.println("ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}" + dir.getPinDir());
                 pw.println("ARDUINO_CORE_DIR = ${ARDUINO_BASE_DIR}" + dir.getArduinoCoreDir());
+                pw.println("ARDUINO_LIB_DIR = ${ARDUINO_BASE_DIR}" + dir.getArduinoLibDir());
+                pw.println("ARDUINO_LIB_DIR_SUB = " + dir.getArduinoLibDirSub());
 
-                if(OSValidator.isUnix()){
+                if (OSValidator.isUnix()) {
                     pw.println("AVR_DUDE = avrdude");
                 }
-                
+
                 if (OSValidator.isWindows()) {
                     pw.println("AVR_DUDE = " + dir.getAvrdudeDir() + " -C " + dir.getAvrdudeConf());
                     pw.println("MAKE = make.exe");

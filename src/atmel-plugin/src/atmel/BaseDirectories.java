@@ -10,6 +10,8 @@ public class BaseDirectories {
 
     private final String KEYCORE = "Arduino.h";
 
+    private final String LIBCORE = "EEPROM.h";
+
     private File folder;
 
     private String arduinoCoreDir;
@@ -20,11 +22,17 @@ public class BaseDirectories {
 
     private String avrdudeConf;
 
+    private String arduinoLibDir;
+
+    private String arduinoLibDirSub;
+
     public BaseDirectories() {
         arduinoCoreDir = new String();
         pinDir = new String();
         avrdudeConf = new String();
         avrdudeConf = new String();
+        arduinoLibDir = new String();
+        arduinoLibDirSub = new String("");
     }
 
     public BaseDirectories(String baseDir, String platform) {
@@ -59,11 +67,21 @@ public class BaseDirectories {
             arduinoCoreDir = arduinoCoreDir.substring(0, arduinoCoreDir.length() - KEYCORE.length() - 1);
             resp = recursiveFindFolder(folder, platform);
             pinDir = resp.substring(base_dir.length());
-            if(OSValidator.isWindows()){
+            if (OSValidator.isWindows()) {
                 arduinoCoreDir = arduinoCoreDir.replace("\\", "/");
                 pinDir = pinDir.replace("\\", "/");
             }
-            
+            resp = recursiveFindFile(folder, LIBCORE);
+            File libfile = new File(resp);
+            String parent = libfile.getParent();
+            if(parent.endsWith("/src")){
+                arduinoLibDirSub = "/src";
+            }else{
+                arduinoLibDirSub = "";
+            }
+            arduinoLibDir = parent.substring(base_dir.length());
+            arduinoLibDir = arduinoLibDir.substring(0,arduinoLibDir.indexOf("/EEPROM"));
+
         } catch (Exception ex) {
         }
     }
@@ -111,6 +129,22 @@ public class BaseDirectories {
 
     public String getAvrdudeConf() {
         return avrdudeConf;
+    }
+
+    public String getArduinoLibDir() {
+        return arduinoLibDir;
+    }
+
+    public void setArduinoLibDir(String arduinoLibDir) {
+        this.arduinoLibDir = arduinoLibDir;
+    }
+
+    public String getArduinoLibDirSub() {
+        return arduinoLibDirSub;
+    }
+
+    public void setArduinoLibDirSub(String arduinoLibDirSub) {
+        this.arduinoLibDirSub = arduinoLibDirSub;
     }
 
 }
