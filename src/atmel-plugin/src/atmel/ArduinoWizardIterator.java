@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package arduino;
+package atmel;
 
 import java.awt.Component;
 import java.io.ByteArrayInputStream;
@@ -15,6 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
@@ -40,7 +37,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 // TODO define position attribute
-@TemplateRegistration(folder = "Project/Arduino", displayName = "#Arduino_displayName", description = "ArduinoDescription.html", iconBase = "arduino/Arduino.png", content = "ArduinoProject.zip")
+@TemplateRegistration(folder = "Project/Atmel", displayName = "#Arduino_displayName", description = "ArduinoDescription.html", iconBase = "atmel/Arduino.png", content = "ArduinoProject.zip")
 @Messages("Arduino_displayName=Arduino Project")
 public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/InstantiatingIterator {
 
@@ -173,16 +170,17 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
                     FileUtil.createFolder(projectRoot, entry.getName());
                 } else {
                     FileObject fo = FileUtil.createData(projectRoot, entry.getName());
-                    
+
                     /*try (PrintWriter pw = new PrintWriter(new FileOutputStream(new File("/home/jaques/arduino-netbeans.log"),true))) {
-                        pw.println(entry.getName());
-                    }*/
-                                        
+                     pw.println(entry.getName());
+                     }*/
                     if ("nbproject/project.xml".equals(entry.getName())) {
                         // Special handling for setting name of Ant-based projects; customize as needed:
                         filterProjectXML(fo, str, projectRoot.getName());
                     } else if ("Makefile".equals(entry.getName())) {
                         filterMakefile(fo, str, wiz);
+                    } else if ("main.cpp".equals(entry.getName())) {
+                        filtermain(fo, str, wiz);
                     } else {
                         writeFile(str, fo);
                     }
@@ -199,6 +197,32 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
             FileUtil.copy(str, out);
         } finally {
             out.close();
+        }
+    }
+
+    private static void filtermain(FileObject fo, ZipInputStream str, WizardDescriptor wiz) throws IOException {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            FileUtil.copy(str, baos);
+
+            try (PrintWriter pw = new PrintWriter(new FileOutputStream(new File(fo.getPath()), true))) {
+
+                String user = System.getProperty("user.name");
+                Date date = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("MMMMM dd, yyyy, hh:mm aaa");
+                pw.println("/* \n"
+                        + " * File:   main.cpp\n"
+                        + " * Author: " + user + "\n"
+                        + " * \n"
+                        + " * Created on " + format.format(date) + "\n"
+                        + " */");
+                pw.println();
+                pw.println(baos.toString());
+            }
+
+        } catch (Exception ex) {
+            Exceptions.printStackTrace(ex);
+            writeFile(str, fo);
         }
     }
 
@@ -232,23 +256,22 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
         }
 
     }
-    
+
     private static void filterMakefile(FileObject fo, ZipInputStream str, WizardDescriptor wiz) throws IOException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             FileUtil.copy(str, baos);
-                           
-            try (PrintWriter pw = new PrintWriter(new FileOutputStream(new File(fo.getPath()),true))) {                
+
+            try (PrintWriter pw = new PrintWriter(new FileOutputStream(new File(fo.getPath()), true))) {
                 pw.print("COM_PORT = ");
                 pw.println(wiz.getProperty("comport"));
-                
-                pw.println("BAUD_RATE = 115200");
+
                 pw.println("ARDUINO_VERSION = 167");
-                                
+
                 pw.print("ARDUINO_BASE_DIR = ");
                 String basedir = wiz.getProperty("basedir").toString().trim().replaceAll("\\\\", "/");
-                pw.println(basedir);  
-                
+                pw.println(basedir);
+
                 pw.print("INCLUDE_LIBS = ");
                 String libraries = wiz.getProperty("libraries").toString().trim().replaceAll("\r", "").replace("\n", "");
                 if (libraries.isEmpty()) {
@@ -256,22 +279,31 @@ public class ArduinoWizardIterator implements WizardDescriptor./*Progress*/Insta
                 } else {
                     pw.println(libraries);
                 }
-                
-                if (wiz.getProperty("board").equals("Arduino Mega 2560")) {
-                    pw.println("ARDUINO_MODEL = atmega2560");
-                    pw.println("ARDUINO_PROGRAMMER = wiring");
-                    pw.println("ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/avr/variants/mega");
-                    
-                } else { //Arduino Uno:
-                    pw.println("ARDUINO_MODEL = atmega328p");
-                    pw.println("ARDUINO_PROGRAMMER = arduino");
-                    pw.println("ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}/hardware/arduino/avr/variants/standard");
+
+                ArduinoDevice arduino = (ArduinoDevice) wiz.getProperty("board");
+                BaseDirectories dir = new BaseDirectories(basedir, arduino.getPinFolder());
+
+                pw.println("ARDUINO_MODEL = " + arduino.getCode());
+                pw.println("BAUD_RATE = " + Long.toString(arduino.getBaudrate()));
+                pw.println("ARDUINO_PROGRAMMER = " + arduino.getProgrammer());
+                pw.println("ARDUINO_PINS_DIR = ${ARDUINO_BASE_DIR}" + dir.getPinDir());
+                pw.println("ARDUINO_CORE_DIR = ${ARDUINO_BASE_DIR}" + dir.getArduinoCoreDir());
+                pw.println("ARDUINO_LIB_DIR = ${ARDUINO_BASE_DIR}" + dir.getArduinoLibDir());
+                pw.println("ARDUINO_LIB_DIR_SUB = " + dir.getArduinoLibDirSub());
+
+                if (OSValidator.isUnix()) {
+                    pw.println("AVR_DUDE = avrdude");
                 }
-                
+
+                if (OSValidator.isWindows()) {
+                    pw.println("AVR_DUDE = " + dir.getAvrdudeDir() + " -C " + dir.getAvrdudeConf());
+                    pw.println("MAKE = make.exe");
+                }
+
                 pw.println();
                 pw.println(baos.toString());
-            }            
-            
+            }
+
         } catch (Exception ex) {
             Exceptions.printStackTrace(ex);
             writeFile(str, fo);
